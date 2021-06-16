@@ -52,3 +52,23 @@ docker run -d --name=weewx-webserver --restart=always -p 80:80 -v
 /tmp/httpdroot:/usr/local/apache2/htdocs httpd
 
 docker run -d --name=weewx-default --restart=always -e CONF=default -v /tmp/httpdroot:/home/weewx/public_html my-weewx
+
+### Docker Compose Sample (with optional user defined driver)
+
+Replace /mnt/docker/weewx with your storage location. If you are using the gw1000 driver from here: https://github.com/gjr80/weewx-gw1000 ,put the gw1000.py file, https://raw.githubusercontent.com/gjr80/weewx-gw1000/master/bin/user/gw1000.py, into your weewx volume on the host (see example below).
+
+```
+version: '2.3'
+services:
+  weewx:
+    image: mitct02/weewx
+    container_name: weewx
+    volumes:
+      - /mnt/docker/weewx/weewx.sbd:/home/weewx/weewx.sbd
+      - /mnt/docker/weewx/public_html:/home/weewx/public_html 
+      - /mnt/docker/weewx/weewx.conf:/home/weewx/weewx.conf
+#      - /mnt/docker/weewx/gw1000.py:/home/weewx/bin/user/gw1000.py #Optional
+    networks:
+      - internal
+    restart: unless-stopped
+```
